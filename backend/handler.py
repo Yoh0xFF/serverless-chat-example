@@ -127,6 +127,7 @@ def get_recent_messages(event, context):
     # Extract the relevant data and order chronologically
     messages = [{"username": x["Username"], "content": x["Content"]} for x in items]
     messages.reverse()
+    logger.info(f"----------> {messages}")
 
     # Send them to the client who asked for it
     data = {"messages": messages}
