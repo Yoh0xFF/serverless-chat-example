@@ -7,8 +7,8 @@ provider:
   runtime: python3.8
   lambdaHashingVersion: 20201221
   region: eu-central-1
-  websocketApiName: serverless-chat-api
-  websocketApiRouteSelectionExpression: $request.body.action
+  websocketsApiName: serverless-chat-api
+  websocketsApiRouteSelectionExpression: $request.body.action
   iam:
     role:
       statements:
