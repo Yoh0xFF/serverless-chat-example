@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 
 import boto3
+import jwt
 
 logger = logging.getLogger("handler_logger")
 logger.setLevel(logging.DEBUG)
@@ -36,9 +37,23 @@ def connection_manager(event, context):
     request_context = event["requestContext"]
     connection_id = request_context.get("connectionId")
     event_type = request_context.get("eventType")
+    token = event.get("queryStringParameters", {}).get("token")
 
     if event_type == "CONNECT":
         logger.info(f"Connect requested {connection_id}")
+
+        # Ensure token was provided
+        if not token:
+            logger.error("Failed: token query parameter not provided.")
+            return _get_response(400, "token query parameter not provided.")
+
+        # Verify the token
+        try:
+            payload = jwt.decode(token, "TOP_SECRET", algorithms="HS256")
+            logger.info("Verified JWT for '{}'".format(payload.get("username")))
+        except:
+            logger.error("Failed: Token verification failed.")
+            return _get_response(400, "Token verification failed.")
 
         # Add connection id to the database
         table = dynamodb.Table(CHAT_CONNECTIONS_TABLE)
@@ -66,14 +81,23 @@ def send_message(event, context):
 
     # Ensure all requited fields were provided
     body = _get_body(event)
-    for attr in ["username", "content"]:
+    for attr in ["token", "content"]:
         if attr not in body:
             logger.error(f"Failed: field '{attr}' not in message dict!")
             return _get_response(400, f"Failed: field '{attr}' not in message dict!")
 
-    table = dynamodb.Table(CHAT_MESSAGES_TABLE)
+    # Verify the token
+    try:
+        payload = jwt.decode(body["token"], "TOP_SECRET", algorithms="HS256")
+        username = payload.get("username")
+        logger.info("Verified JWT for '{}'".format(username))
+    except:
+        logger.error("Failed: Token verification failed.")
+        return _get_response(400, "Token verification failed.")
 
     # Get the next message index
+    table = dynamodb.Table(CHAT_MESSAGES_TABLE)
+
     response = table.query(
         KeyConditionExpression="Room = :room",
         ExpressionAttributeValues={":room": "general"},
