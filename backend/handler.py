@@ -65,7 +65,6 @@ def send_message(event, context):
     logger.info("Message sent on WebSocket")
 
     # Ensure all requited fields were provided
-    logger.info(f"------> {event}")
     body = _get_body(event)
     for attr in ["username", "content"]:
         if attr not in body:
@@ -152,7 +151,7 @@ def _send_to_connection(connection_id, data, event):
 
 def _get_body(event):
     try:
-        return json.load(event.get("body", "{}"))
+        return json.loads(event.get("body", "{}"))
     except:
         logger.exception("Event body could not be JSON decoded")
         return {}
