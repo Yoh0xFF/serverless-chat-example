@@ -25,7 +25,7 @@ def ping(event, context):
     """
     Sanity check endpoint that echoes back to the sender
     """
-    logger.info(f"Ping requested, ts: {datetime.utcnow()}")
+    logger.info(f"Ping requested, ts: {datetime.utcnow().isoformat()}")
     return _get_response(200, "Pong.")
 
 
@@ -88,7 +88,7 @@ def send_message(event, context):
     table.put_item(Item={
         "Room": "general",
         "Index": index,
-        "Timestamp": datetime.utcnow(),
+        "Timestamp": datetime.utcnow().isoformat(),
         "Username": username,
         "Content": content
     })
