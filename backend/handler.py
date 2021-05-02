@@ -113,7 +113,7 @@ def get_recent_messages(event, context):
     """Return the 10 most recent chat messages"""
     logger.info("Retrieving most recent messages.")
     request_context = event["requestContext"]
-    connection_id = request_context.get("ConnectionId")
+    connection_id = request_context.get("connectionId")
 
     # Get the 10 most recent messages
     table = dynamodb.Table(CHAT_MESSAGES_TABLE)
