@@ -127,7 +127,6 @@ def get_recent_messages(event, context):
     # Extract the relevant data and order chronologically
     messages = [{"username": x["Username"], "content": x["Content"]} for x in items]
     messages.reverse()
-    logger.info(f"----------> {messages}")
 
     # Send them to the client who asked for it
     data = {"messages": messages}
@@ -146,7 +145,7 @@ def _send_to_connection(connection_id, data, event):
 
     return gateway_api.post_to_connection(
         ConnectionId=connection_id,
-        Data=json.dumps(boto3).encode("utf-8")
+        Data=json.dumps(data).encode("utf-8")
     )
 
 
