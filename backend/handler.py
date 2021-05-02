@@ -107,7 +107,6 @@ def send_message(event, context):
     index = items[0]["Index"] + 1 if items else 0
 
     # Add new message to the database
-    username = body["username"]
     content = body["content"]
     table.put_item(Item={
         "Room": "general",
