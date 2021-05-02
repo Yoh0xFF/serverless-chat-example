@@ -38,17 +38,15 @@ def ping(event, context):
     logger.info(f"Ping requested, ts: {datetime.utcnow()}")
 
     table = dynamodb.Table("serverless-chat_Messages")
-    timestamp = int(time.time())
     table.put_item(
         Item={
             "Room": "general",
             "Index": 0,
-            "Timestamp": timestamp,
+            "Timestamp": datetime.utcnow(),
             "Username": "ping-user",
             "Content": "Ping!"
         }
     )
-    dynamodb = boto3.resource("dynamodb")
 
     response = {
         "statusCode": 200,
