@@ -65,6 +65,7 @@ def send_message(event, context):
     logger.info("Message sent on WebSocket")
 
     # Ensure all requited fields were provided
+    logger.info(f"------> {event}")
     body = _get_body(event)
     for attr in ["username", "content"]:
         if attr not in body:
