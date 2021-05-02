@@ -10,6 +10,9 @@ logger = logging.getLogger("handler_logger")
 logger.setLevel(logging.DEBUG)
 
 
+dynamodb = boto3.resource("dynamodb")
+
+
 def hello(event, context):
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
@@ -25,7 +28,7 @@ def hello(event, context):
 
 
 def ping(event, context):
-    dynamodb = boto3.resource("dynamodb")
+    global dynamodb
 
     body = {
         "message": f"Hola Amigo, pong - {datetime.utcnow()}!",
