@@ -7,9 +7,16 @@ provider:
   runtime: python3.8
   lambdaHashingVersion: 20201221
   region: eu-central-1
+  websocketApiName: serverless-chat-api
+  websocketApiRouteSelectionExpression: $request.body.action
   iam:
     role:
       statements:
+        - Effect: Allow
+          Action:
+            - "execute-api:ManageConnections"
+          Resource:
+            - "arn:aws:execute-api:*:*:**/@connections/*"
         - Effect: Allow
           Action:
             - "dynamodb:PutItem"
@@ -31,8 +38,28 @@ custom:
     dockerizePip: non-linux
 
 functions:
-  hello:
-    handler: handler.hello
+  connectionManager:
+    handler: handler.connection_manager
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+  defaultMessage:
+    handler: handler.default_message
+    events:
+      - websocket:
+          route: $default
+  getRecentMessages:
+    handler: handler.get_recent_messages
+    events:
+      - websocket:
+          route: getRecentMessages
+  sendMessage:
+    handler: handler.send_message
+    events:
+      - websocket:
+          route: sendMessage
   ping:
     handler: handler.ping
     events:
